@@ -1,7 +1,7 @@
 export GCONFL_BASE_EXCLUSSION="^origin/(master|uat|release)|->"
 export GCONFL_PATHS_MATCHED="^db/(structure|fixtures|tests)/"
-alias gconflictglob='for k in $(git branch -r --no-merged master | sed s/^..// | egrep -v "$GCONFL_BASE_EXCLUSSION" | egrep -v "${BRANCHES_EXCLUDED:-"^$"}" | egrep "$BRANCHES_INCLUDED"  ); do echo -e $k\\n "$(git --no-pager log --name-only origin/master..$k | egrep "$GCONFL_PATHS_MATCHED" | sort | uniq)" ;done | egrep -v "^[ ]*$" | sort | uniq -c  | grep -v "^ *1 "'
-alias gconflictloc='for k in $(git branch -r --no-merged master | sed s/^..// | egrep -v "$GCONFL_BASE_EXCLUSSION" | egrep -v "${BRANCHES_EXCLUDED:-"^$"}" | egrep "$BRANCHES_INCLUDED"  ); do echo -e "$(git --no-pager log --name-only origin/master..$k | egrep "$GCONFL_PATHS_MATCHED" | egrep -v "^$" | sort | uniq)";done | egrep ^\($(git --no-pager log --name-only origin/master.. | egrep "$GCONFL_PATHS_MATCHED" | tr "\n" "|" | sed "s/.$//")\)$ | sort | uniq -c  | grep -v "^ *1 "'
+alias gconflictglob='for k in $(git branch -r --no-merged master | sed s/^..// | grep -E -v "$GCONFL_BASE_EXCLUSSION" | grep -E -v "${BRANCHES_EXCLUDED:-"^$"}" | grep -E "$BRANCHES_INCLUDED"  ); do echo -e $k\\n "$(git --no-pager log --name-only origin/master..$k | grep -E "$GCONFL_PATHS_MATCHED" | sort | uniq)" ;done | grep -E -v "^[ ]*$" | sort | uniq -c  | grep -v "^ *1 "'
+alias gconflictloc='for k in $(git branch -r --no-merged master | sed s/^..// | grep -E -v "$GCONFL_BASE_EXCLUSSION" | grep -E -v "${BRANCHES_EXCLUDED:-"^$"}" | grep -E "$BRANCHES_INCLUDED"  ); do echo -e "$(git --no-pager log --name-only origin/master..$k | grep -E "$GCONFL_PATHS_MATCHED" | grep -E -v "^$" | sort | uniq)";done | grep -E ^\($(git --no-pager log --name-only origin/master.. | grep -E "$GCONFL_PATHS_MATCHED" | tr "\n" "|" | sed "s/.$//")\)$ | sort | uniq -c  | grep -v "^ *1 "'
 
 gconflict()
 {
@@ -34,8 +34,8 @@ gconflict()
 
 
     for k
-    in $(git branch -r --no-merged master | sed s/^..// | egrep -v "$GCONFL_BASE_EXCLUSSION|$REF" | egrep -v "${BRANCHES_EXCLUDED:-"^$"}" | egrep "$BRANCHES_INCLUDED"  );
+    in $(git branch -r --no-merged master | sed s/^..// | grep -E -v "$GCONFL_BASE_EXCLUSSION|$REF" | grep -E -v "${BRANCHES_EXCLUDED:-"^$"}" | grep -E "$BRANCHES_INCLUDED"  );
     do
-        X=$(git --no-pager log --name-only origin/master..$k | egrep "$GCONFL_PATHS_MATCHED" | sort | uniq | egrep "$RGX" ) && echo -e \\n$(tput bold)$k$(tput sgr0)\\n"$X";
+        X=$(git --no-pager log --name-only origin/master..$k | grep -E "$GCONFL_PATHS_MATCHED" | sort | uniq | grep -E "$RGX" ) && echo -e \\n$(tput bold)$k$(tput sgr0)\\n"$X";
     done
 }
